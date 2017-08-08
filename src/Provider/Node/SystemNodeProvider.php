@@ -66,6 +66,20 @@ class SystemNodeProvider implements NodeProviderInterface
                 passthru('ifconfig 2>&1');
                 break;
             case 'LIN':
+                // try using the sys filesystem before running netstat
+                $pattern = '/sys/class/net/*/address';
+                $files = glob($pattern);
+                if (is_array($files)) {
+                    $files = array_diff($files, ['lo']);
+                    if (count($files)) {
+                        $mac = file_get_contents(array_shift($files));
+                        if ($mac !== false && strlen($mac) > 0) {
+                            ob_end_clean();
+                            return $mac;
+                        }
+                    }
+                }
+                // no break
             default:
                 passthru('netstat -ie 2>&1');
                 break;

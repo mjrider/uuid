@@ -139,7 +139,9 @@ class SystemNodeProviderTest extends TestCase
 
         $provider = new SystemNodeProvider();
         $provider->getNode();
-        $passthru->verifyInvokedOnce([$command]);
+        if ($os != "Linux") {
+            $passthru->verifyInvokedOnce([$command]);
+        }
     }
 
     /**
